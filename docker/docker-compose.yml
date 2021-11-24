@@ -1,0 +1,37 @@
+version: '3.1'
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - ../database:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+    ports:
+      - 8080:80
+  php:
+    # у нас свой образ для PHP, указываем путь к нему и говорим что его надо собрать
+    build: ./php
+    # этот образ будет общаться с mysql
+    links:
+      - db
+    volumes:
+      - ../backend:/var/www
+  nginx:
+    image: nginx
+    volumes:
+      - ./hosts:/etc/nginx/conf.d
+      - ../backend:/var/www
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NGINX_HOST=foobar.com
+      - NGINX_PORT=80
+    links:
+      - php
