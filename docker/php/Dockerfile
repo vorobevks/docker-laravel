@@ -23,4 +23,4 @@ ADD php.ini /usr/local/etc/php/conf.d/40-custom.ini
 
 WORKDIR /var/www
 
-CMD bash -c "cp .env.example .env && composer install && php artisan key:generate && php artisan migrate && php-fpm"
+CMD bash -c "cp .env.example .env && composer install && php artisan key:generate && php artisan migrate && php artisan admin:install && php-fpm"
