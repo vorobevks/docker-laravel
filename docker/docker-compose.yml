@@ -3,10 +3,12 @@ services:
   db:
     image: mariadb
     restart: always
+    command: --init-file /data/application/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: 123456
     volumes:
       - ../database:/var/lib/mysql
+      - ./init-database.sql:/data/application/init.sql
     ports:
       - "3306:3306"
   phpmyadmin:
