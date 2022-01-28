@@ -7,8 +7,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 123456
     volumes:
-      - ../database:/var/lib/mysql
-      - ./init-database.sql:/data/application/init.sql
+      - ./database:/var/lib/mysql
+      - ./docker/init-database.sql:/data/application/init.sql
     ports:
       - "3306:3306"
   phpmyadmin:
@@ -20,17 +20,17 @@ services:
       - 8080:80
   php:
     # у нас свой образ для PHP, указываем путь к нему и говорим что его надо собрать
-    build: ./php
+    build: ./docker/php
     # этот образ будет общаться с mysql
     links:
       - db
     volumes:
-      - ../backend:/var/www
+      - ./backend:/var/www
   nginx:
     image: nginx
     volumes:
-      - ./hosts:/etc/nginx/conf.d
-      - ../backend:/var/www
+      - ./docker/hosts:/etc/nginx/conf.d
+      - ./backend:/var/www
     ports:
       - "80:80"
       - "443:443"
