@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/laravel/jetstream" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/laravel/fortify" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/mobiledetect/mobiledetectlib" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/bacon/bacon-qr-code" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/paragonie/constant_time_encoding" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/pragmarx/google2fa" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/dasprid/enum" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/jenssegers/agent" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/jaybizzle/crawler-detect" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/livewire/livewire" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
