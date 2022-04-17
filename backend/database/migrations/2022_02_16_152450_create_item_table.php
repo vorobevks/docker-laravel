@@ -17,6 +17,8 @@ class CreateItemTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
+            $table->string('article');
+            $table->double('price');
             $table->string('preview_image');
             $table->json('images')->nullable();
             $table->timestamps();

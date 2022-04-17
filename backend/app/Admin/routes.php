@@ -11,7 +11,9 @@ Route::group([
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
 
-    $router->get('/', 'CategoryController@index');
+    $router->get('/', function (){
+        return redirect('/admin/categories');
+    });
     $router->resource('/categories', CategoryController::class);
     $router->resource('/items', ItemController::class);
 });

@@ -7,6 +7,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Encore\Admin\Layout\Content;
+
 
 class CategoryController extends AdminController
 {
@@ -28,6 +30,9 @@ class CategoryController extends AdminController
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('name', __('Название'));
+        $grid->column('parent_id', __('Родительская категория'))->display(function (){
+            return $this->parent ? $this->parent->name : null;
+        });
         $grid->column('created_at', __('Создано'))->display(function () {
             return $this->created_at->toDateTimeString();
         });
@@ -61,14 +66,36 @@ class CategoryController extends AdminController
      *
      * @return Form
      */
-    protected function form()
+    protected function form($id = null)
     {
+        if ($id) {
+            $parentCategories = Category::where('id', '<>', $id)->pluck('name', 'id')->all();
+        } else {
+            $parentCategories = Category::pluck('name', 'id')->all();
+        }
         $form = new Form(new Category());
         $form->display('id', __('ID'));
-        $form->text('name', __('Название'));
+        $form->text('name', __('Название'))->required();
+        $form->select('parent_id', __('Родительская категория'))->options($parentCategories);
+        $form->file('image', __('Изображение'))->required();
         $form->datetime('created_at', __('Создано'))->readonly();
         $form->datetime('updated_at', __('Обновлено'))->readonly();
 
         return $form;
+    }
+
+
+    /**
+     * Переопределим метод родителя
+     * @param $id
+     * @param Content $content
+     * @return Content
+     */
+    public function edit($id, Content $content)
+    {
+        return $content
+            ->title($this->title())
+            ->description($this->description['edit'] ?? trans('admin.edit'))
+            ->body($this->form($id)->edit($id));
     }
 }

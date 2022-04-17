@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Item;
 use Illuminate\Database\Seeder;
 use League\Csv\Reader;
-use League\Csv\Statement;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+use PHPHtmlParser\Dom;
+use Illuminate\Support\Facades\Log;
 
 
 class ProductSeeder extends Seeder
@@ -18,76 +20,90 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
+        ini_set('memory_limit', '2024M');
         $categories = Category::withTrashed()->get();
         foreach ($categories as $category) {
             $category->forceDelete();
         }
-//        var_dump(resource_path());die;
-
-        $file = file(resource_path().'/Products.csv');
-        $data = array_slice($file, 1);
-        $parts = array_chunk($data, 5000);
-        foreach ($parts as $index => $part) {
-            $fileName = resource_path('parts/'.date('y-m-d').$index.'.csv');
-            file_put_contents($fileName, $part);
+        $items = Item::withTrashed()->get();
+        foreach ($items as $item) {
+            $item->forceDelete();
         }
-//        die;
 
-        $path = resource_path('parts/*.csv');
-        $g = glob($path);
-//        var_dump($g);die;
-        foreach (array_slice($g, 0) as $file) {
-            var_dump($file);
-
-
-            $stream = fopen($file, 'r');
-
-            $csv = Reader::createFromStream($stream);
-            $csv->setDelimiter(',');
-
-            $stmt = Statement::create();
-            $i=1;
-            $records = $stmt->process($csv);
-            foreach ($records as $record) {
-                var_dump($i++);
-                $category = Category::where('name', $record[6])->first();
-//            if (!$category) {
-                $category = new Category();
-                $category->name = $record[6];
-                $category->save();
-//            }
+        $i = 0;
+        $reader = Reader::createFromPath(resource_path().'/Products.csv', 'r');
+        foreach ($reader as $record) {
+            if (!$i) {
+                $i++;
+                continue;
             }
-//            var_dump($file);
-        }
-        die;
-
-        $files = Storage::files(resource_path().'/parts'); // Все файлы в указанном каталоге
-        var_dump($files);die;
 
 
+            $parentCategoryForItem = null;
+
+            $category1 = Category::where('name', $record[1])->where('parent_id', null)->first();
+            if (!$category1) {
+                $category1 = new Category();
+            }
+                $category1->image = '';
+                $category1->name = $record[1];
+                $category1->save();
+                $parentCategoryForItem = $category1->id;
+
+            if ($record[2]) {
+                $category2 = Category::where('name', $record[2])->where('parent_id', $category1->id)->first();
+                if (!$category2) {
+                    $category2 = new Category();
+                }
+                    $category2->image = '';
+                    $category2->name = $record[2];
+                    $category2->parent_id = $category1->id;
+                    $category2->save();
+                    $parentCategoryForItem = $category2->id;
 
 
-        $csvFileName = "Products.csv";
-        $csvFile = resource_path($csvFileName);
+                if ($record[3]) {
+                    $category3 = Category::where('name', $record[3])->where('parent_id', $category2->id)->first();
+                    if (!$category3) {
+                        $category3 = new Category();
+                    }
+                    $category3->image = '';
+                    $category3->name = $record[3];
+                    $category3->parent_id = $category2->id;
+                    $category3->save();
+                    $parentCategoryForItem = $category3->id;
+                }
+            }
 
-        $stream = fopen($csvFile, 'r');
 
-        $csv = Reader::createFromStream($stream);
-        $csv->setDelimiter(',');
-
-        $stmt = Statement::create();
-
-        $records = $stmt->process($csv);
-        foreach ($records as $record) {
-            $category = Category::where('name', $record[6])->first();
-//            if (!$category) {
-                $category = new Category();
-                $category->name = $record[6];
-                $category->save();
+            //todo этот блок кода нужен был для того чтобы подтягивать картинки по названию товара из яндекса
+            // но там получается бан при частых запросах и яндекс говорит что надо ввести капчу
+            // пока оставляю, может быть позже что нибудь придумаю
+//            $client = new \GuzzleHttp\Client();
+//            $response = $client->request('GET', "https://yandex.ru/images/search?text=$record[6]&isize=eq&iw=1366&ih=768");
+//            $body = $response->getBody()->getContents();
+//            $dom = new Dom;
+//            $dom->loadStr($body);
+//            $a = $dom->getElementsbyTag('img');
+//            foreach ($a as $item) {
+//                var_dump($item->src);
 //            }
+
+
+
+            $item = new Item();
+            $item->article = $record[4];
+            $item->name = $record[6];
+            $item->price = (double)str_replace(' ', '', $record[8]);
+            $item->description = $record[10];
+
+            $images = explode(' ', $record[13]);
+//            $item->preview_image = $a[3]->src;
+            $item->preview_image = $images[0];
+//            $item->images = [$a[2]->src, $a[4]->src];
+            $item->images = $images;
+            $item->save();
+            $item->categories()->attach($parentCategoryForItem);
         }
-//        die;
-
-
     }
 }
