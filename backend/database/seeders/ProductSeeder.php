@@ -17,6 +17,7 @@ class ProductSeeder extends Seeder
      * Run the database seeds.
      *
      * @return void
+     * @throws \Exception
      */
     public function run()
     {
@@ -89,6 +90,13 @@ class ProductSeeder extends Seeder
 //                var_dump($item->src);
 //            }
 
+            $images = [
+                'https://avatars.mds.yandex.net/i?id=31240204612f6119af37531fa549ab5d-5558158-images-thumbs&n=13',
+                'https://avatars.mds.yandex.net/i?id=cc03e8956ceec86cddda3a7d9ab363c5-5888889-images-thumbs&n=13',
+                'https://avatars.mds.yandex.net/i?id=00e8a4218187a9a18d2ae6e02bc34302-5087276-images-thumbs&n=13',
+                'https://avatars.mds.yandex.net/i?id=37bf19723c8c9ee89bc9dcdaac4542bb-5381133-images-thumbs&n=13'
+            ];
+
 
 
             $item = new Item();
@@ -97,11 +105,12 @@ class ProductSeeder extends Seeder
             $item->price = (double)str_replace(' ', '', $record[8]);
             $item->description = $record[10];
 
-            $images = explode(' ', $record[13]);
+//            $images = explode(' ', $record[13]);
+
 //            $item->preview_image = $a[3]->src;
-            $item->preview_image = $images[0];
+            $item->preview_image = $images[random_int(0,count($images)-1)];
 //            $item->images = [$a[2]->src, $a[4]->src];
-            $item->images = $images;
+            $item->images = [$images[random_int(0,count($images)-1)], $images[random_int(0,count($images)-1)]];
             $item->save();
             $item->categories()->attach($parentCategoryForItem);
         }
