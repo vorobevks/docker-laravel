@@ -1,0 +1,13 @@
+# Документация для админки
+openapi: 3.0.3
+
+info:
+  title: Документация
+  version: 1.0.0
+
+servers:
+  - url: "/api"
+
+paths:
+
+

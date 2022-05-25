@@ -39,9 +39,9 @@ services:
       - NGINX_PORT=80
     links:
       - php
-  node:
-    build: ./docker/node
-    volumes:
-      - ./frontend:/app
-    ports:
-      - "81:8080"
+#  node:
+#    build: ./docker/node
+#    volumes:
+#      - ./frontend:/app
+#    ports:
+#      - "81:8080"
