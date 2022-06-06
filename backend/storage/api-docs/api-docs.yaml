@@ -9,5 +9,13 @@ servers:
   - url: "/api"
 
 paths:
+  '/categories':
+    get:
+      tags:
+        - Категории
+      summary: Получить список категорий
+      responses:
+        200:
+          description: 'ok'
 
 
