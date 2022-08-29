@@ -1,7 +1,7 @@
-FROM node
+FROM node:16
 
 WORKDIR /app
 
 RUN yarn global add @vue/cli
 
-CMD npm install && yarn serve
+CMD yarn install && yarn serve

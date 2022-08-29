@@ -33,6 +33,8 @@ class CategoryController extends AdminController
         $grid->column('parent_id', __('Родительская категория'))->display(function (){
             return $this->parent ? $this->parent->name : null;
         });
+        $grid->column('image', __('Изображение'))->image();
+
         $grid->column('created_at', __('Создано'))->display(function () {
             return $this->created_at->toDateTimeString();
         });
@@ -55,6 +57,7 @@ class CategoryController extends AdminController
 
         $show->field('id', __('ID'));
         $show->field('name', __('Название'));
+        $show->field('image', __('Изображение'))->image();
         $show->field('created_at', __('Создано'));
         $show->field('updated_at', __('Обновлено'));
 

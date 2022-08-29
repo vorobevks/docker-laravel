@@ -1,0 +1,51 @@
+# Документация для админки
+openapi: 3.0.3
+
+info:
+  title: Документация
+  version: 1.0.0
+
+servers:
+  - url: "/api"
+
+paths:
+  '/categories':
+    get:
+      tags:
+        - Категории
+      summary: Получить список категорий
+      responses:
+        200:
+          description: 'ok'
+  '/category':
+    post:
+      tags:
+        - Категории
+      summary: Добавить категорию
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Категория 2
+                  required: true
+                image:
+                  type: string
+                  format: binary
+                  required: true
+                parent_id:
+                  type: integer
+                  required: false
+
+      responses:
+        200:
+          description: "Ok"
+        422:
+          description: "Ошибка валидации"
+
+
+
+
