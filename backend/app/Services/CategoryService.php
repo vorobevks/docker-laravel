@@ -26,9 +26,28 @@ class CategoryService
         return $category;
     }
 
-    public function getAll(): Collection
+    /**
+     * рекурсивный метод заполнения массива категорий
+     * @param $cat
+     * @param $result
+     */
+    public function catResult($parents)
     {
-        return Category::all();
+        $result = [];
+        foreach ($parents as $parent) {
+            $result[] = ['id'=> $parent->id, 'name'=>$parent->name];
+            $childs = $this->catResult($parent->children);
+            if ($childs) {
+                $result[count($result)-1]['children'] = $childs;
+            }
+        }
+        return $result;
+    }
+
+    public function getAll()
+    {
+        $parentCategories = Category::where('parent_id', null)->get();
+        return ($this->catResult($parentCategories));
     }
 
 }
